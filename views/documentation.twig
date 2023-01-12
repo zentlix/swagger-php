@@ -7,11 +7,11 @@
     <title>{% block title %}{{ documentation.spec.info.title }}{% endblock title %}</title>
 
     {% block stylesheets %}
-        <link rel="stylesheet" type="text/css" href="swagger-ui.css" />
-        <link rel="stylesheet" type="text/css" href="index.css" />
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/zentlix/swagger-php/public/swagger-ui.css" />
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/zentlix/swagger-php/public/index.css" />
     {% endblock stylesheets %}
-    <link rel="icon" type="image/png" href="favicon-32x32.png" sizes="32x32" />
-    <link rel="icon" type="image/png" href="favicon-16x16.png" sizes="16x16" />
+    <link rel="icon" type="image/png" href="https://cdn.jsdelivr.net/gh/zentlix/swagger-php/public/favicon-32x32.png" sizes="32x32" />
+    <link rel="icon" type="image/png" href="https://cdn.jsdelivr.net/gh/zentlix/swagger-php/public/favicon-16x16.png" sizes="16x16" />
 
     {% block swagger_data %}
         {# json_encode(65) is for JSON_UNESCAPED_SLASHES|JSON_HEX_TAG to avoid JS XSS #}
@@ -25,9 +25,9 @@
 {% endblock %}
 
 {% block javascripts %}
-    <script src="swagger-ui-bundle.js" charset="UTF-8"> </script>
-    <script src="swagger-ui-standalone-preset.js" charset="UTF-8"> </script>
-    <script src="init-swagger-ui.js" charset="UTF-8"> </script>
+    <script src="https://cdn.jsdelivr.net/gh/zentlix/swagger-php/public/swagger-ui-bundle.js" charset="UTF-8"> </script>
+    <script src="https://cdn.jsdelivr.net/gh/zentlix/swagger-php/public/swagger-ui-standalone-preset.js" charset="UTF-8"> </script>
+    <script src="https://cdn.jsdelivr.net/gh/zentlix/swagger-php/public/init-swagger-ui.js" charset="UTF-8"> </script>
 {% endblock javascripts %}
 
 {% block swagger_initialization %}
