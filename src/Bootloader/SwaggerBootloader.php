@@ -6,6 +6,7 @@ namespace Spiral\OpenApi\Bootloader;
 
 use Psr\SimpleCache\CacheInterface;
 use Spiral\Boot\Bootloader\Bootloader;
+use Spiral\Boot\Environment\DebugMode;
 use Spiral\Config\ConfiguratorInterface;
 use Spiral\Config\Patch\Append;
 use Spiral\Core\Container\Autowire;
@@ -13,7 +14,12 @@ use Spiral\Core\FactoryInterface;
 use Spiral\OpenApi\Config\SwaggerConfig;
 use Spiral\OpenApi\Generator\Generator;
 use Spiral\OpenApi\Generator\GeneratorInterface;
-use Spiral\OpenApi\Generator\Options;
+use Spiral\OpenApi\Generator\Parser\ConfigurationParser;
+use Spiral\OpenApi\Generator\Parser\OpenApiOptions;
+use Spiral\OpenApi\Generator\Parser\OpenApiParser;
+use Spiral\OpenApi\Generator\Parser\ParserInterface;
+use Spiral\OpenApi\Generator\Parser\ParserRegistry;
+use Spiral\OpenApi\Generator\Parser\ParserRegistryInterface;
 use Spiral\OpenApi\Renderer\HtmlRenderer;
 use Spiral\OpenApi\Renderer\JsonRenderer;
 use Spiral\OpenApi\Renderer\Renderer;
@@ -26,6 +32,11 @@ final class SwaggerBootloader extends Bootloader
     protected const SINGLETONS = [
         Renderer::class => [self::class, 'initRenderer'],
         GeneratorInterface::class => [self::class, 'initGenerator'],
+        ParserRegistryInterface::class => [self::class, 'initParserRegistry'],
+    ];
+
+    protected const BINDINGS = [
+        OpenApiParser::class => [self::class, 'initOpenApiParser'],
     ];
 
     public function __construct(
@@ -33,9 +44,9 @@ final class SwaggerBootloader extends Bootloader
     ) {
     }
 
-    public function init(): void
+    public function init(DebugMode $debugMode): void
     {
-        $this->initConfig();
+        $this->initConfig($debugMode);
     }
 
     public function boot(ViewsBootloader $views): void
@@ -54,11 +65,22 @@ final class SwaggerBootloader extends Bootloader
         );
     }
 
-    private function initConfig(): void
+    private function initConfig(DebugMode $debugMode): void
     {
         $this->config->setDefaults(
             SwaggerConfig::CONFIG,
             [
+                'documentation' => [
+                    'info' => [
+                        'title' => 'My App',
+                        'description' => 'API documentation',
+                        'version' => '1.0.0',
+                    ],
+                ],
+                'parsers' => [
+                    ConfigurationParser::class,
+                    OpenApiParser::class,
+                ],
                 'renderers' => [
                     JsonRenderer::FORMAT => JsonRenderer::class,
                     YamlRenderer::FORMAT => YamlRenderer::class,
@@ -74,6 +96,7 @@ final class SwaggerBootloader extends Bootloader
                         'hash' => true,
                     ],
                 ],
+                'use_cache' => false === $debugMode->isEnabled(),
             ]
         );
     }
@@ -96,16 +119,40 @@ final class SwaggerBootloader extends Bootloader
         return $renderer;
     }
 
-    private function initGenerator(SwaggerConfig $config, CacheInterface $cache): GeneratorInterface
+    private function initParserRegistry(SwaggerConfig $config, FactoryInterface $factory): ParserRegistry
     {
-        $options = new Options(
+        $registry = new ParserRegistry();
+
+        foreach ($config->getParsers() as $parser) {
+            $parser = match (true) {
+                \is_string($parser) => $factory->make($parser),
+                $parser instanceof Autowire => $parser->resolve($factory),
+                default => $parser
+            };
+
+            \assert($parser instanceof ParserInterface);
+            $registry->addParser($parser);
+        }
+
+        return $registry;
+    }
+
+    private function initGenerator(
+        ParserRegistryInterface $registry,
+        CacheInterface $cache,
+        SwaggerConfig $config
+    ): GeneratorInterface {
+        return new Generator($registry, $config->getCacheItemId(), $config->useCache() ? $cache : null);
+    }
+
+    private function initOpenApiParser(SwaggerConfig $config): OpenApiParser
+    {
+        return new OpenApiParser(new OpenApiOptions(
             paths: $config->getPaths(),
             config: $config->getGeneratorConfig(),
             version: $config->getVersion(),
             exclude: $config->getExclude(),
             pattern: $config->getPattern()
-        );
-
-        return new Generator($cache, $options, $config->getCacheItemId());
+        ));
     }
 }

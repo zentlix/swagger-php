@@ -6,6 +6,7 @@ namespace Spiral\OpenApi\Config;
 
 use Spiral\Core\Container\Autowire;
 use Spiral\Core\InjectableConfig;
+use Spiral\OpenApi\Generator\Parser\ParserInterface;
 use Spiral\OpenApi\Renderer\RendererInterface;
 
 final class SwaggerConfig extends InjectableConfig
@@ -14,6 +15,14 @@ final class SwaggerConfig extends InjectableConfig
     public const DEFAULT_CACHE_ITEM_ID = 'cache_item_id';
 
     protected array $config = [
+        'documentation' => [
+            'info' => [
+                'title' => 'My App',
+                'description' => 'API documentation',
+                'version' => '1.0.0',
+            ],
+        ],
+        'parsers' => [],
         'renderers' => [],
         'paths' => [],
         'exclude' => null,
@@ -25,7 +34,21 @@ final class SwaggerConfig extends InjectableConfig
                 'hash' => true,
             ],
         ],
+        'use_cache' => true,
     ];
+
+    public function getDocumentation(): array
+    {
+        return $this->config['documentation'] ?? [];
+    }
+
+    /**
+     * @psalm-return array<non-empty-string, string|ParserInterface|Autowire>
+     */
+    public function getParsers(): array
+    {
+        return $this->config['parsers'] ?? [];
+    }
 
     /**
      * @psalm-return array<non-empty-string, string|RendererInterface|Autowire>
@@ -78,5 +101,10 @@ final class SwaggerConfig extends InjectableConfig
     public function getGeneratorConfig(): array
     {
         return $this->config['generator_config'] ?? [];
+    }
+
+    public function useCache(): bool
+    {
+        return $this->config['use_cache'] ?? false;
     }
 }

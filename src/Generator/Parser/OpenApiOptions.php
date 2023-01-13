@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Spiral\OpenApi\Generator;
+namespace Spiral\OpenApi\Generator\Parser;
 
 use Symfony\Component\Finder\Finder;
 
-final class Options
+final class OpenApiOptions
 {
     /**
      * @psalm-param array|Finder|non-empty-string $paths
