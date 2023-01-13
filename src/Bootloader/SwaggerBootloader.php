@@ -6,6 +6,7 @@ namespace Spiral\OpenApi\Bootloader;
 
 use Psr\SimpleCache\CacheInterface;
 use Spiral\Boot\Bootloader\Bootloader;
+use Spiral\Boot\DirectoriesInterface;
 use Spiral\Boot\Environment\DebugMode;
 use Spiral\Config\ConfiguratorInterface;
 use Spiral\Config\Patch\Append;
@@ -44,9 +45,9 @@ final class SwaggerBootloader extends Bootloader
     ) {
     }
 
-    public function init(DebugMode $debugMode): void
+    public function init(DebugMode $debugMode, DirectoriesInterface $dirs): void
     {
-        $this->initConfig($debugMode);
+        $this->initConfig($debugMode, $dirs);
     }
 
     public function boot(ViewsBootloader $views): void
@@ -65,7 +66,7 @@ final class SwaggerBootloader extends Bootloader
         );
     }
 
-    private function initConfig(DebugMode $debugMode): void
+    private function initConfig(DebugMode $debugMode, DirectoriesInterface $dirs): void
     {
         $this->config->setDefaults(
             SwaggerConfig::CONFIG,
@@ -86,7 +87,9 @@ final class SwaggerBootloader extends Bootloader
                     YamlRenderer::FORMAT => YamlRenderer::class,
                     HtmlRenderer::FORMAT => HtmlRenderer::class,
                 ],
-                'paths' => [],
+                'paths' => [
+                    $dirs->get('app')
+                ],
                 'exclude' => null,
                 'pattern' => null,
                 'version' => null,
