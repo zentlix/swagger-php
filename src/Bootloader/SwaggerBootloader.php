@@ -8,6 +8,7 @@ use Psr\SimpleCache\CacheInterface;
 use Spiral\Boot\Bootloader\Bootloader;
 use Spiral\Boot\DirectoriesInterface;
 use Spiral\Boot\Environment\DebugMode;
+use Spiral\Cache\Bootloader\CacheBootloader;
 use Spiral\Config\ConfiguratorInterface;
 use Spiral\Config\Patch\Append;
 use Spiral\Core\Container\Autowire;
@@ -30,6 +31,10 @@ use Spiral\Views\Bootloader\ViewsBootloader;
 
 final class SwaggerBootloader extends Bootloader
 {
+    protected const DEPENDENCIES = [
+        CacheBootloader::class,
+    ];
+
     protected const SINGLETONS = [
         Renderer::class => [self::class, 'initRenderer'],
         GeneratorInterface::class => [self::class, 'initGenerator'],
