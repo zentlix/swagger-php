@@ -81,11 +81,11 @@ final class SwaggerConfigTest extends TestCase
         $this->assertSame('foo', $config->getPattern());
     }
 
-    public function testGetCacheItemId(): void
+    public function testGetCacheKey(): void
     {
-        $config = new SwaggerConfig(['cache_item_id' => 'some']);
+        $config = new SwaggerConfig(['cache_key' => 'some']);
 
-        $this->assertSame('some', $config->getCacheItemId());
+        $this->assertSame('some', $config->getCacheKey());
     }
 
     public function testGetVersion(): void

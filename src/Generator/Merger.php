@@ -30,7 +30,7 @@ final class Merger
     private static function mergeFromArray(AbstractAnnotation $annotation, array $properties, bool $overwrite): void
     {
         $done = [];
-        $defaults = get_class_vars(\get_class($annotation));
+        $defaults = get_class_vars($annotation::class);
 
         foreach ($annotation::$_nested as $className => $propertyName) {
             if (\is_string($propertyName)) {

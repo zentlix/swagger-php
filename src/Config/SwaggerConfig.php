@@ -12,7 +12,7 @@ use Spiral\OpenApi\Renderer\RendererInterface;
 final class SwaggerConfig extends InjectableConfig
 {
     public const CONFIG = 'swagger';
-    public const DEFAULT_CACHE_ITEM_ID = 'cache_item_id';
+    public const DEFAULT_CACHE_KEY = 'swagger_docs';
 
     protected array $config = [
         'documentation' => [
@@ -28,7 +28,7 @@ final class SwaggerConfig extends InjectableConfig
         'exclude' => null,
         'pattern' => null,
         'version' => null,
-        'cache_item_id' => self::DEFAULT_CACHE_ITEM_ID,
+        'cache_key' => self::DEFAULT_CACHE_KEY,
         'generator_config' => [
             'operationId' => [
                 'hash' => true,
@@ -85,9 +85,9 @@ final class SwaggerConfig extends InjectableConfig
     /**
      * @psalm-return non-empty-string
      */
-    public function getCacheItemId(): string
+    public function getCacheKey(): string
     {
-        return $this->config['cache_item_id'] ?? self::DEFAULT_CACHE_ITEM_ID;
+        return $this->config['cache_key'] ?? self::DEFAULT_CACHE_KEY;
     }
 
     /**

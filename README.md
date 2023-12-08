@@ -76,7 +76,7 @@ return [
     'exclude' => null,
     'pattern' => null,
     'version' => null,
-    'cache_item_id' => SwaggerConfig::DEFAULT_CACHE_ITEM_ID,
+    'cache_key' => SwaggerConfig::DEFAULT_CACHE_KEY,
     'generator_config' => [
         'operationId' => [
             'hash' => true,

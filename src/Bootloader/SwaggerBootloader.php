@@ -98,7 +98,7 @@ final class SwaggerBootloader extends Bootloader
                 'exclude' => null,
                 'pattern' => null,
                 'version' => null,
-                'cache_item_id' => SwaggerConfig::DEFAULT_CACHE_ITEM_ID,
+                'cache_key' => SwaggerConfig::DEFAULT_CACHE_KEY,
                 'generator_config' => [
                     'operationId' => [
                         'hash' => true,
@@ -150,7 +150,7 @@ final class SwaggerBootloader extends Bootloader
         CacheInterface $cache,
         SwaggerConfig $config
     ): GeneratorInterface {
-        return new Generator($registry, $config->getCacheItemId(), $config->useCache() ? $cache : null);
+        return new Generator($registry, $config->getCacheKey(), $config->useCache() ? $cache : null);
     }
 
     private function initOpenApiParser(SwaggerConfig $config): OpenApiParser

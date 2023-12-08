@@ -14,11 +14,11 @@ use Spiral\OpenApi\Generator\Parser\ParserRegistryInterface;
 final class Generator implements GeneratorInterface
 {
     /**
-     * @psalm-param non-empty-string $cacheItemId
+     * @psalm-param non-empty-string $cacheKey
      */
     public function __construct(
         private readonly ParserRegistryInterface $parsers,
-        private readonly string $cacheItemId,
+        private readonly string $cacheKey,
         private readonly ?CacheInterface $cache = null,
     ) {
     }
@@ -28,7 +28,7 @@ final class Generator implements GeneratorInterface
      */
     public function generate(): OpenApi
     {
-        $item = $this->cache?->get($this->cacheItemId);
+        $item = $this->cache?->get($this->cacheKey);
         if (null !== $item) {
             return $item;
         }
@@ -43,7 +43,7 @@ final class Generator implements GeneratorInterface
             $parser->parse($openApi, $analysis);
         }
 
-        $this->cache?->set($this->cacheItemId, $openApi);
+        $this->cache?->set($this->cacheKey, $openApi);
 
         return $openApi;
     }
